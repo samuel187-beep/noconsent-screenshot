@@ -1,24 +1,29 @@
 # Dockerfile
-# Nutze die aktuelle Playwright-Version 1.55.0 (passt zu deinem Fehler)
+# Playwright + Chromium passend zur Lib-Version
 FROM mcr.microsoft.com/playwright:v1.55.0-jammy
 
-# Arbeitsverzeichnis
 WORKDIR /app
 
-# Nur package-Dateien zuerst kopieren (schlankere Layer, bessere Caches)
+# Nur package-Dateien zuerst (bessere Cache-Layer)
 COPY package*.json ./
 
-# Dependencies installieren und Browser-Binaries einbetten
-RUN npm ci --omit=dev \
+# Wenn ein lockfile existiert -> npm ci, sonst npm install
+# Danach: passenden Browser mit allen System-Dependencies einbetten
+RUN if [ -f package-lock.json ]; then \
+      npm ci --omit=dev ; \
+    else \
+      npm install --omit=dev ; \
+    fi \
  && npx playwright install --with-deps chromium
 
-# App-Code kopieren
+# App-Code
 COPY . .
 
-# Port-Konfiguration (Render gibt PORT als Env mit)
+# Env/Port
 ENV NODE_ENV=production
 ENV PORT=10000
 EXPOSE 10000
 
-# Start-Kommando
+# Start
 CMD ["node", "server.js"]
+
