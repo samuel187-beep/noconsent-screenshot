@@ -1,4 +1,3 @@
-# server.js
 /**
  * NC Monitor Render/Container Service
  * Endpunkte:
