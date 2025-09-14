@@ -19,8 +19,3 @@ ENV PORT=10000
 EXPOSE 10000
 
 CMD ["node", "server.js"]
-
-
-# Start
-CMD ["node", "server.js"]
-
